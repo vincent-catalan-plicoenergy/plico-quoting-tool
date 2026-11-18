@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plico Quoting Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <h1>Plico Quoting Tool</h1>
+  <div class="topbar-actions">
+    <button type="button" id="load-example" class="secondary">Load Parmelia example</button>
+    <button type="button" id="reset" class="secondary">Reset</button>
+  </div>
+</header>
+<p class="banner" id="config-banner">Loading pricing config…</p>
+
+<main class="layout">
+  <form id="quote-form" class="form" autocomplete="off">
+    <!-- 1. Customer inputs -->
+    <fieldset>
+      <legend>1. Customer</legend>
+      <label>Customer name <input name="customer_name"></label>
+      <label>Property address <input name="address"></label>
+      <label>Postcode <input name="postcode" inputmode="numeric" maxlength="4"></label>
+      <label>Residential status
+        <select name="residential_status">
+          <option value="">Select…</option><option value="owner">Owner-occupier</option>
+          <option value="landlord">Landlord</option><option value="renter">Renter</option>
+        </select>
+      </label>
+      <label>Objective
+        <select name="objective">
+          <option value="">Select…</option><option value="lower_bills">Lower bills</option>
+          <option value="blackout_protection">Blackout protection</option>
+          <option value="energy_independence">Energy independence</option>
+          <option value="rebates">Rebates</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>2. Electricity bill</legend>
+      <label class="check"><input type="checkbox" name="bill_uploaded"> Bill received (front + back)</label>
+      <label>Quarterly bill ($) <input type="number" name="quarterly_bill" min="0" step="1"></label>
+      <label>Daily usage (kWh) <small>from bill, overrides estimate</small><input type="number" name="daily_usage_kwh" min="0" step="0.1"></label>
+      <label>Tariff ($/kWh) <input type="number" name="tariff_per_kwh" min="0" step="0.0001"></label>
+      <label>Supply charge ($/day) <input type="number" name="supply_charge_per_day" min="0" step="0.0001"></label>
+      <label>Feed-in ($/kWh) <input type="number" name="feed_in_per_kwh" min="0" step="0.001"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>3. Existing system</legend>
+      <label class="check"><input type="checkbox" name="has_existing_solar"> Has existing solar</label>
+      <div class="group" data-show-if="has_existing_solar">
+        <label>Size (kW) <input type="number" name="existing_solar_kw" min="0" step="0.01"></label>
+        <label>Panel count <input type="number" name="existing_panel_count" min="0"></label>
+        <label>Panel wattage (W) <input type="number" name="existing_panel_watts" min="0"></label>
+        <label>Age (years) <input type="number" name="existing_system_age_years" min="0"></label>
+        <label>Inverter brand/model <input name="existing_inverter_model"></label>
+        <label class="check"><input type="checkbox" name="retain_existing_solar"> Retain existing solar</label>
+      </div>
+      <label class="check"><input type="checkbox" name="has_existing_battery"> Has existing battery</label>
+      <div class="group" data-show-if="has_existing_battery">
+        <label>Battery brand/model/capacity <input name="existing_battery_model"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>4. Site</legend>
+      <label>Phase
+        <select name="phase"><option value="">Select…</option><option value="single">Single</option><option value="three">Three</option></select>
+      </label>
+      <label>Roof type
+        <select name="roof_type"><option value="">Select…</option><option value="tile">Tile</option><option value="tin">Tin</option><option value="other">Other</option></select>
+      </label>
+      <label>Storeys
+        <select name="storeys"><option value="">Select…</option><option value="1">Single</option><option value="2">Double</option></select>
+      </label>
+      <label>Panel location <input name="panel_location" placeholder="e.g. north roof face"></label>
+      <div class="checks" id="site-adders"></div>
+      <h4>Pre-install checks done</h4>
+      <div class="checks">
+        <label class="check"><input type="checkbox" name="switchboard_checked"> Switchboard</label>
+        <label class="check"><input type="checkbox" name="shading_checked"> Shading</label>
+        <label class="check"><input type="checkbox" name="orientation_checked"> Orientation / tilt</label>
+        <label class="check"><input type="checkbox" name="internet_available"> Internet access</label>
+        <label class="check"><input type="checkbox" name="site_photos"> Site photos</label>
+      </div>
+    </fieldset>
+
+    <!-- 2. Proposed system -->
+    <fieldset>
+      <legend>5. Proposed system</legend>
+      <label>Solution type <select name="solution_type" id="solution_type"></select></label>
+      <label>Package <select name="package" id="package"></select></label>
+      <div class="group" data-show-if-package="custom">
+        <label>Solar (kW) <input type="number" name="pv_kw" min="0" step="0.01"></label>
+        <label>Battery (kWh) <input type="number" name="battery_kwh" min="0" step="0.1"></label>
+        <label>Inverter (kW) <input type="number" name="inverter_kw" min="0" step="0.1"></label>
+        <label>Inverter model <input name="inverter_model"></label>
+        <label>Battery model <input name="battery_model"></label>
+      </div>
+    </fieldset>
+
+    <!-- 3. Commercial -->
+    <fieldset>
+      <legend>6. Commercial</legend>
+      <label>Markup (%) <input type="number" name="markup_pct" min="0" step="1"></label>
+      <label>Price override ($) <small>before rebates</small><input type="number" name="price_override" min="0" step="1"></label>
+      <label class="check"><input type="checkbox" name="join_vpp"> Customer joins VPP</label>
+      <label>VPP discount ($) <input type="number" name="vpp_discount" min="0" step="1"></label>
+      <label class="check"><input type="checkbox" name="wa_rebate_eligible"> Eligible for WA battery rebate</label>
+      <label>Promotion discount ($) <input type="number" name="promo_discount" min="0" step="1"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>7. Payment</legend>
+      <label>Payment type
+        <select name="payment_type" id="payment_type">
+          <option value="">Select…</option>
+          <option value="cash">Cash</option>
+          <option value="plico_finance">Plico Finance</option>
+          <option value="interest_free_loan">Govt interest-free loan</option>
+          <option value="combination">Interest-free loan + Plico Finance</option>
+        </select>
+      </label>
+      <label>Deposit ($) <input type="number" name="deposit" min="0" step="1"></label>
+      <div class="group" data-show-if-payment="plico_finance combination">
+        <label>Plico Finance term <select name="plico_finance_term_months" id="plico_terms"></select></label>
+      </div>
+      <div class="group" data-show-if-payment="interest_free_loan combination">
+        <label>Interest-free loan ($) <input type="number" name="interest_free_loan_amount" min="0" step="1"></label>
+        <label>Loan term <select name="interest_free_loan_term_months" id="ifl_terms"></select></label>
+      </div>
+    </fieldset>
+  </form>
+
+  <section class="results" id="results" aria-live="polite">
+    <p class="muted">Fill in the form to see the quote.</p>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

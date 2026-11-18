@@ -1,0 +1,87 @@
+{
+  "_comment": "PLACEHOLDER VALUES. Replace with figures from the Master Plico Quoting Tool and current CER / WA Government rules before quoting customers.",
+  "version": "0.1.0-placeholder",
+  "currency": "AUD",
+
+  "packages": {
+    "energy_creator_10": {
+      "label": "Energy Creator 10",
+      "pv_kw": 6.6,
+      "battery_kwh": 10.1,
+      "inverter_kw": 5.0,
+      "inverter_model": "Hybrid 5 kW (placeholder)",
+      "battery_model": "10.1 kWh battery (placeholder)"
+    },
+    "energy_creator_10_plus": {
+      "label": "Energy Creator 10+",
+      "pv_kw": 7.92,
+      "battery_kwh": 10.1,
+      "inverter_kw": 5.0,
+      "inverter_model": "Hybrid 5 kW (placeholder)",
+      "battery_model": "10.1 kWh battery (placeholder)"
+    }
+  },
+
+  "unit_costs": {
+    "pv_per_kw": 650,
+    "hybrid_inverter": 1800,
+    "battery_per_kwh": 550,
+    "install_base": 1500,
+    "install_pv_per_kw": 250,
+    "install_battery": 900,
+    "existing_solar_removal": 600
+  },
+
+  "site_adders": {
+    "switchboard_upgrade": { "label": "Switchboard upgrade", "cost": 1200 },
+    "trenching": { "label": "Trenching", "cost": 800 },
+    "battery_clearance_works": { "label": "Battery/inverter clearance works", "cost": 400 },
+    "steep_roof": { "label": "Steep roof", "cost": 450 },
+    "double_storey": { "label": "Double storey / scaffolding", "cost": 900 },
+    "tilt_racking": { "label": "Tilt racking", "cost": 500 },
+    "fireproof_sheeting": { "label": "Fireproof sheeting", "cost": 350 },
+    "three_phase": { "label": "Three-phase works", "cost": 700 },
+    "multiple_dwellings": { "label": "Multiple dwellings", "cost": 500 }
+  },
+
+  "margin": {
+    "default_markup_pct": 35
+  },
+
+  "stc": {
+    "price_per_stc": 37.0,
+    "pv_zone_rating": 1.382,
+    "pv_deeming_years": 5,
+    "battery_factor_per_kwh": 6.8,
+    "battery_tiers": [
+      { "up_to_kwh": 14, "pct": 100 },
+      { "up_to_kwh": 28, "pct": 60 },
+      { "up_to_kwh": 50, "pct": 15 }
+    ]
+  },
+
+  "wa_rebate": {
+    "per_kwh": 130,
+    "cap": 1300,
+    "requires_vpp": true
+  },
+
+  "vpp_discount": 0,
+
+  "finance": {
+    "plico_finance_rate_pct": 9.99,
+    "plico_finance_terms_months": [24, 36, 48, 60, 84],
+    "interest_free_loan_max": 10000,
+    "interest_free_loan_terms_months": [60, 84, 120]
+  },
+
+  "savings": {
+    "tariff_per_kwh": 0.3237,
+    "supply_charge_per_day": 1.1636,
+    "feed_in_per_kwh": 0.025,
+    "pv_yield_kwh_per_kw_day": 4.4,
+    "self_consumption_pv_only": 0.35,
+    "self_consumption_with_battery": 0.75,
+    "existing_panel_degradation_note": "Old systems assumed to contribute nothing unless retained."
+  }
+}
